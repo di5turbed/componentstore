@@ -1,0 +1,62 @@
+{% extends "app/layout.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8 col-md-offset-2"> 
+        <h1 style="margin-top: 30px;">{{ article.title }}</h1>
+        <p class="text-muted">
+            <span class="glyphicon glyphicon-tag"></span> {{ article.get_category_display }} | 
+            <span class="glyphicon glyphicon-calendar"></span> {{ article.posted|date:"d.m.Y" }}
+        </p>
+        
+        {% if article.image %}
+        <img src="{{ article.image.url }}" class="img-responsive img-rounded" alt="{{ article.title }}" style="margin-bottom: 20px; max-height: 400px;">
+        {% endif %}
+        
+        <div style="font-size: 16px; line-height: 1.6; margin-bottom: 30px;">
+            {{ article.full_content|linebreaks }}
+        </div>
+        
+        <a href="{% url 'blog_list' %}" class="btn btn-default"><span class="glyphicon glyphicon-arrow-left"></span> Назад к списку</a>
+
+        <hr style="border-width: 2px; margin: 40px 0;"/>
+
+        <h3>Комментарии <span class="badge">{{ comments.count }}</span></h3>
+
+        {% if user.is_authenticated %}
+            <div class="well">
+                <h4 style="margin-top: 0;">Оставить свой отзыв</h4>
+                <form method="POST">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        {{ form.text }}
+                    </div>
+                    <button type="submit" class="btn btn-primary">Отправить комментарий</button>
+                </form>
+            </div>
+        {% else %}
+            <div class="alert alert-warning">
+                <h4><span class="glyphicon glyphicon-lock"></span> Внимание</h4>
+                <p>Для добавления своего комментария, пожалуйста, <strong>авторизуйтесь</strong> на сайте.</p>
+            </div>
+        {% endif %}
+
+        <div class="comments-list" style="margin-top: 30px;">
+            {% for comment in comments %}
+                <div class="panel panel-default">
+                    <div class="panel-heading" style="background-color: #f9f9f9;">
+                        <strong><span class="glyphicon glyphicon-user"></span> {{ comment.author.username }}</strong>
+                        <span class="text-muted pull-right"><small>{{ comment.date|date:"d.m.Y H:i" }}</small></span>
+                    </div>
+                    <div class="panel-body">
+                        {{ comment.text|linebreaksbr }}
+                    </div>
+                </div>
+            {% empty %}
+                <p class="text-muted" style="font-style: italic;">Пока нет ни одного комментария. Станьте первым!</p>
+            {% endfor %}
+        </div>
+
+    </div>
+</div>
+{% endblock %}

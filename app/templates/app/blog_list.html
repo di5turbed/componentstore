@@ -1,0 +1,33 @@
+{% extends "app/layout.html" %}
+
+{% block content %}
+
+<h1>Блог</h1>
+
+<div class="row" style="display: flex; flex-wrap: wrap;">
+    {% for article in articles %}
+    <div class="col-md-4" style="display: flex; margin-bottom: 20px;">
+        <div class="thumbnail" style="text-align: center; padding: 20px; width: 100%;">
+
+            {% if article.image %}
+            <img src="{{ article.image.url }}"
+                 alt="{{ article.title }}"
+                 style="max-width: 100%; height: 200px; object-fit: contain; margin-bottom: 15px;">
+            {% endif %}
+
+            <div class="caption">
+                <h3>{{ article.title }}</h3>
+                <p class="text-muted" style="min-height: 45px;">{{ article.short_description|truncatechars:100 }}</p>
+                <p><small class="text-muted">{{ article.posted|date:"d.m.Y" }}</small></p>
+                <p style="margin-top: 15px;">
+                    <a href="{{ article.get_absolute_url }}" class="btn btn-primary" role="button">Читать далее</a>
+                </p>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <p>Пока нет статей.</p>
+    {% endfor %}
+</div>
+
+{% endblock %}

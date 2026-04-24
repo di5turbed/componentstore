@@ -1,0 +1,100 @@
+{% extends "app/layout.html" %}
+
+{% block content %}
+
+{% load static %} <div class="jumbotron">
+    <h1>components-store</h1>
+    <p class="lead">Мыши, клавиатуры, коврики, мониторы и наушники — под игры, работу и киберспорт.</p>
+    <p>
+        <a href="#catalog" class="btn btn-primary btn-large">Перейти в каталог &raquo;</a>
+        <a href="{% url 'about' %}" class="btn btn-default btn-large">Связаться с нами</a>
+    </p>
+</div>
+
+<div id="myCarousel" class="carousel slide" data-ride="carousel" data-interval="2000" style="margin-bottom: 30px;">
+    <ol class="carousel-indicators">
+        <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+        <li data-target="#myCarousel" data-slide-to="1"></li>
+        <li data-target="#myCarousel" data-slide-to="2"></li>
+    </ol>
+    <div class="carousel-inner" role="listbox">
+        <div class="item active">
+            {# Используем ваш путь к клавиатуре #}
+            <img src="{% static 'app/images/keyboard.png' %}" alt="Первый слайд" class="img-responsive" style="width: 100%; height: 400px; object-fit: cover;" />
+            <div class="carousel-caption" role="option">
+                <p>
+                    Лучшие механические клавиатуры
+                    <a class="btn btn-default" href="{% url 'home' %}#catalog">Читать далее</a>
+                </p>
+            </div>
+        </div>
+        <div class="item">
+            {# Используем ваш путь к мыши #}
+            <img src="{% static 'app/images/mouse.png' %}" alt="Второй слайд" class="img-responsive" style="width: 100%; height: 400px; object-fit: cover;" />
+            <div class="carousel-caption" role="option">
+                <p>
+                    Игровые мыши с точным сенсором
+                    <a class="btn btn-default" href="{% url 'home' %}#catalog">Читать далее</a>
+                </p>
+            </div>
+        </div>
+        <div class="item">
+            {# Используем ваш путь к монитору #}
+            <img src="{% static 'app/images/monitor.png' %}" alt="Третий слайд" class="img-responsive" style="width: 100%; height: 400px; object-fit: cover;" />
+            <div class="carousel-caption" role="option">
+                <p>
+                    Мониторы с высокой частотой обновления
+                    <a class="btn btn-default" href="{% url 'home' %}#catalog">Читать далее</a>
+                </p>
+            </div>
+        </div>
+    </div>
+    <a class="left carousel-control" href="#myCarousel" role="button" data-slide="prev">
+        <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+        <span class="sr-only">Previous</span>
+    </a>
+    <a class="right carousel-control" href="#myCarousel" role="button" data-slide="next">
+        <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+        <span class="sr-only">Next</span>
+    </a>
+</div>
+
+<h2 id="catalog">Категории</h2>
+<div class="row" style="display: flex; flex-wrap: nowrap; justify-content: space-between; margin-left: -15px; margin-right: -15px;">
+    {% for c in categories %}
+    <div style="flex: 1 1 0; padding: 0 15px;">
+        <a href="#" class="btn btn-default btn-block" style="white-space: normal; text-align: left; padding: 15px; height: 100%;">
+            <h3 style="margin-top: 0; color: #337ab7; font-size: 20px;">{{ c.title }}</h3>
+            <p style="margin-bottom: 0; color: #333; font-size: 13px;">{{ c.text }}</p>
+        </a>
+    </div>
+    {% endfor %}
+</div>
+
+<hr/>
+
+<h2>Хиты продаж</h2>
+<div class="row" style="display: flex; flex-wrap: wrap;">
+    {% for p in featured %}
+    <div class="col-md-4" style="display: flex;">
+        <div class="thumbnail" style="text-align: center; padding: 20px; width: 100%;">
+        
+            {% load static %}
+            <img src="{% static p.image %}" 
+                 alt="{{ p.name }}" 
+                 style="max-width: 100%; height: 200px; object-fit: contain; margin-bottom: 15px;">
+            <div class="caption">
+                <h3>{{ p.name }}</h3>
+                <p class="text-muted" style="min-height: 45px;">{{ p.desc }}</p>
+                <h4 style="color: #d9534f; font-size: 1.5em;"><strong>{{ p.price }}</strong></h4>
+                <p style="margin-top: 15px;">
+                    <a href="#" class="btn btn-primary" role="button">В корзину</a>
+                    <a href="#" class="btn btn-default" role="button">Подробнее</a>
+                </p>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+{% endblock %}

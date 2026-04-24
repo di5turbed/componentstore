@@ -1,0 +1,54 @@
+{% extends "app/layout.html" %}
+
+{% block content %}
+
+<h2>{{ title }}</h2>
+
+{% if form != None %}
+    <p>Пожалуйста, оставьте ваш отзыв. Нам очень важно ваше мнение!</p>
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            {{ form.as_p }}
+        </div>
+        <button type="submit" id="btn-send" class="btn btn-primary">Отправить отзыв</button>
+    </form>
+{% else %}
+    <h3>Спасибо за ваш отзыв!</h3>
+    <p>Ваши ответы успешно отправлены. Мы приняли следующие данные:</p>
+    <ul>
+        <li><strong>Имя:</strong> {{ data.name }}</li>
+        <li><strong>Email:</strong> {{ data.email }}</li>
+        <li><strong>Оценка сайта:</strong> {{ data.rating }}</li>
+        <li><strong>Откуда узнали:</strong> {{ data.source }}</li>
+        <li><strong>Подписка на новости:</strong> {{ data.subscribe }}</li>
+        <li><strong>Пожелания:</strong> {{ data.message }}</li>
+    </ul>
+{% endif %}
+
+{% block scripts %}
+<script>
+    $(document).ready(function() {
+        
+        $('#btn-send').mouseover(function() {
+            $(this).css('color', 'yellow');
+        });
+        
+        $('#btn-send').mouseout(function() {
+            $(this).css('color', '');
+        });
+
+        var inputFields = $('#id_name, #id_email, #id_message, #id_source');
+        
+        inputFields.focus(function() {
+            $(this).css('background-color', '#e6f7ff'); 
+        });
+        
+        inputFields.blur(function() {
+            $(this).css('background-color', ''); 
+        });
+    });
+</script>
+{% endblock %}
+
+{% endblock %}

@@ -1,0 +1,20 @@
+{% extends "app/layout.html" %}
+{% block content %}
+<h2>{{ title }}</h2>
+<div class="row">
+    <div class="col-md-6">
+        <h4>Обзор механической клавиатуры</h4>
+        <video width="100%" controls poster="/media/poster1.jpg">
+            <source src="/media/video1.mp4" type="video/mp4">
+            Ваш браузер не поддерживает видео.
+        </video>
+    </div>
+    <div class="col-md-6">
+        <h4>Тест игровой мыши</h4>
+        <video width="100%" controls poster="/media/poster2.jpg">
+            <source src="/media/video2.mp4" type="video/mp4">
+            Ваш браузер не поддерживает видео.
+        </video>
+    </div>
+</div>
+{% endblock %}
