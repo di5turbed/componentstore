@@ -64,8 +64,8 @@
     {% for c in categories %}
     <div style="flex: 1 1 0; padding: 0 15px;">
         <a href="#" class="btn btn-default btn-block" style="white-space: normal; text-align: left; padding: 15px; height: 100%;">
-            <h3 style="margin-top: 0; color: #337ab7; font-size: 20px;">{{ c.title }}</h3>
-            <p style="margin-bottom: 0; color: #333; font-size: 13px;">{{ c.text }}</p>
+            <h3 style="margin-top: 0; color: #337ab7; font-size: 20px;">{{ c.name }}</h3>
+            <p style="margin-bottom: 0; color: #333; font-size: 13px;">{{ c.description }}</p>
         </a>
     </div>
     {% endfor %}
@@ -76,24 +76,36 @@
 <h2>Хиты продаж</h2>
 <div class="row" style="display: flex; flex-wrap: wrap;">
     {% for p in featured %}
-    <div class="col-md-4" style="display: flex;">
-        <div class="thumbnail" style="text-align: center; padding: 20px; width: 100%;">
+    
+    <div class="col-md-4" style="display: flex; margin-bottom: 20px;">
         
-            {% load static %}
-            <img src="{% static p.image %}" 
-                 alt="{{ p.name }}" 
-                 style="max-width: 100%; height: 200px; object-fit: contain; margin-bottom: 15px;">
-            <div class="caption">
-                <h3>{{ p.name }}</h3>
-                <p class="text-muted" style="min-height: 45px;">{{ p.desc }}</p>
-                <h4 style="color: #d9534f; font-size: 1.5em;"><strong>{{ p.price }}</strong></h4>
+        <div class="thumbnail" style="text-align: center; padding: 20px; width: 100%; display: flex; flex-direction: column; justify-content: space-between;">
+            
+            <div>
+                {% if p.image %}
+                    <img src="{{ p.image.url }}" alt="{{ p.name }}" style="max-width: 100%; height: 200px; object-fit: contain; margin-bottom: 15px;">
+                {% else %}
+                    <img src="{% static 'app/images/logo.png' %}" alt="Нет фото" style="max-width: 100%; height: 200px; object-fit: contain; margin-bottom: 15px;">
+                {% endif %}
+                
+                <div class="caption">
+                    <h3>{{ p.name }}</h3>
+                    <p class="text-muted">{{ p.short_description }}</p>
+                </div>
+            </div>
+            
+            <div>
+                <h4 style="color: #d9534f;"><strong>{{ p.price }} ₽</strong></h4>
                 <p style="margin-top: 15px;">
-                    <a href="#" class="btn btn-primary" role="button">В корзину</a>
-                    <a href="#" class="btn btn-default" role="button">Подробнее</a>
+                    <a href="#" class="btn btn-primary">В корзину</a>
+                    <a href="{% url 'product_detail' p.id %}" class="btn btn-default">Подробнее</a>
                 </p>
             </div>
+            
         </div>
-    </div>
+        </div>
+    {% empty %}
+        <p style="margin-left: 15px;">Товары пока не добавлены.</p>
     {% endfor %}
 </div>
 

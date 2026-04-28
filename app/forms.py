@@ -6,7 +6,7 @@ from django import forms
 from django.contrib.auth.forms import AuthenticationForm
 from django.utils.translation import gettext_lazy as _
 
-from app.models import Comment, Blog
+from app.models import Category, Comment, Blog, Product
 
 class BootstrapAuthenticationForm(AuthenticationForm):
     """Authentication form which uses boostrap CSS."""
@@ -67,5 +67,36 @@ class BlogForm(forms.ModelForm):
             'title': forms.TextInput(attrs={'class': 'form-control'}),
             'short_description': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
             'full_content': forms.Textarea(attrs={'class': 'form-control', 'rows': 6}),
+            'category': forms.Select(attrs={'class': 'form-control'}),
+        }
+
+
+class CategoryForm(forms.ModelForm):
+    class Meta:
+        model = Category
+        fields = ('name', 'description')
+        labels = {'name': 'Название категории', 'description': 'Описание'}
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'form-control'}),
+            'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+        }
+
+class ProductForm(forms.ModelForm):
+    class Meta:
+        model = Product
+        fields = ('name', 'short_description', 'full_description', 'price', 'image', 'category')
+        labels = {
+            'name': 'Название товара',
+            'short_description': 'Краткое описание',
+            'full_description': 'Полное описание',
+            'price': 'Цена',
+            'image': 'Файл картинки',
+            'category': 'Категория'
+        }
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'form-control'}),
+            'short_description': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+            'full_description': forms.Textarea(attrs={'class': 'form-control', 'rows': 6}),
+            'price': forms.NumberInput(attrs={'class': 'form-control'}),
             'category': forms.Select(attrs={'class': 'form-control'}),
         }

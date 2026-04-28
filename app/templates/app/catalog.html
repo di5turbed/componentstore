@@ -1,0 +1,21 @@
+{% extends "app/layout.html" %}
+
+{% block content %}
+<h2>{{ title }}</h2>
+<p class="lead">Выберите интересующую вас категорию товаров:</p>
+
+<div class="row" style="display: flex; flex-wrap: wrap; margin-top: 30px;">
+    {% for c in categories %}
+    <div class="col-md-4" style="margin-bottom: 20px;">
+        <a href="{% url 'category_products' c.id %}" class="btn btn-default btn-block" style="white-space: normal; text-align: left; padding: 20px; height: 100%; border-left: 5px solid #337ab7;">
+            <h3 style="margin-top: 0; color: #337ab7;">{{ c.name }}</h3>
+            <p style="color: #666; margin-bottom: 0;">{{ c.description }}</p>
+            <hr style="margin: 10px 0;"/>
+            <span class="text-primary">Перейти к товарам &raquo;</span>
+        </a>
+    </div>
+    {% empty %}
+    <p>Категории пока не добавлены.</p>
+    {% endfor %}
+</div>
+{% endblock %}

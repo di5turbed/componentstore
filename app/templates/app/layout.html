@@ -31,7 +31,18 @@
         <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
                 <li><a href="{% url 'home' %}">Главная</a></li>
-                <li><a href="{% url 'home' %}#catalog">Каталог</a></li>
+                <li><a href="{% url 'catalog' %}">Каталог</a></li>
+    
+                {% if user.is_superuser %}
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Управление <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="{% url 'add_category' %}">Добавить категорию</a></li>
+                        <li><a href="{% url 'add_product' %}">Добавить товар</a></li>
+                        <li><a href="{% url 'newpost' %}">Новая статья блога</a></li>
+                    </ul>
+                </li>
+                {% endif %}
                 
                 <li><a href="{% url 'about' %}">О нас</a></li> 
                 <li><a href="{% url 'videopost' %}">Видео</a></li>

@@ -7,26 +7,22 @@ from django.shortcuts import render, redirect
 from django.http import HttpRequest
 from django.contrib.auth.forms import UserCreationForm
 
-from app.forms import BlogForm, CommentForm, FeedbackForm
-from app.models import Blog, Comment
+from app.forms import BlogForm, CategoryForm, CommentForm, FeedbackForm, ProductForm
+from app.models import Blog, Category, Comment, Product
+from django.contrib.auth.decorators import user_passes_test
 
 def home(request):
     """Renders the home page."""
     assert isinstance(request, HttpRequest)
 
-    categories = [
-        {"title": "Мыши", "text": "Проводные и беспроводные, под ладонь/коготь/пальцы."},
-        {"title": "Клавиатуры", "text": "Механика и мембрана, TKL/75%/100%, подсветка."},
-        {"title": "Коврики", "text": "Speed/Control, разные размеры — от S до XXL."},
-        {"title": "Мониторы", "text": "IPS/VA, 75–240 Гц, для игр и работы."},
-        {"title": "Наушники", "text": "Игровые гарнитуры и студийные модели."},
-    ]
+    categories = Category.objects.all()
 
-    featured = [
-        {"name": "Игровая мышь VXE R1", "desc": "Лёгкий корпус, точный сенсор", "price": "2 690 ₽", "image": "app/images/mouse.png"}, 
-        {"name": "Клавиатура Cidoo 61qk v2", "desc": "Компактная раскладка, сменные свитчи, тихие стабилизаторы.", "price": "3 490 ₽", "image": "app/images/keyboard.png"},
-        {"name": "Монитор Samsung Odyssey G8", "desc": "Плавная картинка и хорошая цветопередача.", "price": "21 990 ₽", "image": "app/images/monitor.png"},
-    ]
+    category_id = request.GET.get('category')
+
+    if category_id:
+        featured = Product.objects.filter(category_id=category_id).order_by('-id')
+    else:
+        featured = Product.objects.all().order_by('-id')
 
     return render(
         request,
@@ -136,7 +132,9 @@ def blog_list(request):
         }
     )
 def blog_detail(request, slug=None, id=None):
-    if slug:
+    if slug and slug.isdigit():
+        article = Blog.objects.get(id=slug)
+    elif slug:
         article = Blog.objects.get(slug=slug)
     else:
         article = Blog.objects.get(id=id)
@@ -152,22 +150,22 @@ def blog_detail(request, slug=None, id=None):
             comment_f.post = article
             comment_f.save()
             
-            if slug:
-                return redirect('blog_detail', slug=slug)
+            if article.slug:
+                return redirect('blog_detail', slug=article.slug)
             else:
-                return redirect('blog_detail', id=id)
+                return redirect('blog_detail', slug=article.id)
     else:
         form = CommentForm()
 
     return render(
-        request,
-        'app/blog_detail.html',
+        request, 
+        'app/blog_detail.html', 
         {
-            'title': article.title,
-            'article': article,
-            'comments': comments,
-            'form': form,
-            'year': datetime.now().year,
+            'title': article.title, 
+            'article': article, 
+            'comments': comments, 
+            'form': form, 
+            'year': datetime.now().year
         }
     )
 
@@ -189,9 +187,91 @@ def newpost(request):
         'title': 'Добавить статью',
         'year': datetime.now().year,
     })
+
 def videopost(request):
     assert isinstance(request, HttpRequest)
     return render(request, 'app/videopost.html', {
         'title': 'Видео-обзоры',
         'year': datetime.now().year,
     })
+
+def catalog(request):
+    """Страница со списком всех категорий."""
+    categories = Category.objects.all()
+    return render(
+        request,
+        'app/catalog.html',
+        {
+            'title': 'Каталог товаров',
+            'categories': categories,
+            'year': datetime.now().year,
+        }
+    )
+
+def category_products(request, category_id):
+    """Страница со списком товаров конкретной категории."""
+    category = Category.objects.get(id=category_id)
+    products = Product.objects.filter(category=category)
+    return render(
+        request,
+        'app/category_products.html',
+        {
+            'title': category.name,
+            'category': category,
+            'products': products,
+            'year': datetime.now().year,
+        }
+    )
+
+def category_detail(request, category_id):
+    """Страница со списком товаров выбранной категории."""
+    category = Category.objects.get(id=category_id)
+    products = Product.objects.filter(category=category)
+    
+    return render(
+        request,
+        'app/category_detail.html',
+        {
+            'title': category.name,
+            'category': category,
+            'products': products,
+            'year': datetime.now().year,
+        }
+    )
+
+def product_detail(request, product_id):
+    """Страница с подробным описанием конкретного товара."""
+    product = Product.objects.get(id=product_id)
+    return render(
+        request,
+        'app/product_detail.html',
+        {
+            'title': product.name,
+            'product': product,
+            'year': datetime.now().year,
+        }
+    )
+
+@user_passes_test(lambda u: u.is_superuser)
+def add_category(request):
+    """Добавление новой категории администратором."""
+    if request.method == "POST":
+        form = CategoryForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('catalog')
+    else:
+        form = CategoryForm()
+    return render(request, 'app/add_category.html', {'form': form, 'title': 'Новая категория'})
+
+@user_passes_test(lambda u: u.is_superuser)
+def add_product(request):
+    """Добавление нового товара администратором."""
+    if request.method == "POST":
+        form = ProductForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('catalog')
+    else:
+        form = ProductForm()
+    return render(request, 'app/add_product.html', {'form': form, 'title': 'Новый товар'})

@@ -1,0 +1,43 @@
+{% extends "app/layout.html" %}
+
+{% block content %}
+<div style="margin-top: 20px;">
+    <ol class="breadcrumb">
+      <li><a href="{% url 'home' %}">Главная</a></li>
+      <li><a href="{% url 'catalog' %}">Каталог</a></li>
+      <li class="active">{{ category.name }}</li>
+    </ol>
+</div>
+
+<h2>{{ title }}</h2>
+<p class="text-muted">{{ category.description }}</p>
+<hr/>
+
+<div class="row" style="display: flex; flex-wrap: wrap;">
+    {% for p in products %}
+    <div class="col-md-4" style="display: flex; margin-bottom: 20px;">
+        <div class="thumbnail" style="text-align: center; padding: 20px; width: 100%; display: flex; flex-direction: column; justify-content: space-between;">
+            <div>
+                <img src="{{ p.image.url }}" alt="{{ p.name }}" style="max-width: 100%; height: 200px; object-fit: contain; margin-bottom: 15px;">
+                <div class="caption">
+                    <h3>{{ p.name }}</h3>
+                    <p class="text-muted">{{ p.short_description }}</p>
+                </div>
+            </div>
+            <div>
+                <p style="margin-top: 15px;">
+                    <a href="#" class="btn btn-primary" role="button">В корзину</a>
+                    <a href="{% url 'product_detail' p.id %}" class="btn btn-default" role="button">Подробнее</a>
+                </p>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-md-12">
+        <p class="alert alert-info">В этой категории пока нет товаров.</p>
+    </div>
+    {% endfor %}
+</div>
+
+<a href="{% url 'catalog' %}" class="btn btn-default"><span class="glyphicon glyphicon-arrow-left"></span> Назад в каталог</a>
+{% endblock %}
